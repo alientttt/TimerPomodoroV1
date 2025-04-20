@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center h-screen font-sans">
+    <div
+      class="bg-white shadow-xl rounded-2xl p-8 max-w-sm w-full text-center space-y-6"
+    >
+      <h1 class="text-3xl font-bold text-gray-800">Pomodoro Timer</h1>
+      <p class="text-sm text-gray-500">Fokus belajar 🎯</p>
+
+      <div id="timer" class="text-6xl font-bold text-gray-700">25:00</div>
+
+      <div class="space-x-4">
+        <button
+          id="startBtn"
+          class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-xl"
+        >
+          Start
+        </button>
+        <button
+          id="pauseBtn"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl"
+        >
+          Pause
+        </button>
+        <button
+          id="resetBtn"
+          class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-xl"
+        >
+          Reset
+        </button>
+      </div>
+
+      <p id="status" class="text-sm text-gray-500 mt-4">
+        Status: <span class="font-medium text-blue-500">Fokus</span>
+      </p>
+    </div>
+
+    <script>
+      let focusTime = 25 * 60; // 25 menit
+      let breakTime = 5 * 60; // 5 menit
+      let isFocus = true;
+      let timeLeft = focusTime;
+      let timer;
+      let isRunning = false;
+
+      const timerDisplay = document.getElementById("timer");
+      const statusDisplay = document
+        .getElementById("status")
+        .querySelector("span");
+      const startBtn = document.getElementById("startBtn");
+      const pauseBtn = document.getElementById("pauseBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      function updateDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.textContent = `${String(minutes).padStart(
+          2,
+          "0"
+        )}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function toggleStatus() {
+        isFocus = !isFocus;
+        timeLeft = isFocus ? focusTime : breakTime;
+        statusDisplay.textContent = isFocus ? "Fokus" : "Istirahat";
+        statusDisplay.classList.toggle("text-blue-500", isFocus);
+        statusDisplay.classList.toggle("text-pink-500", !isFocus);
+        updateDisplay();
+      }
+
+      function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        timer = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateDisplay();
+          } else {
+            toggleStatus();
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        clearInterval(timer);
+        isRunning = false;
+      }
+
+      function resetTimer() {
+        pauseTimer();
+        timeLeft = isFocus ? focusTime : breakTime;
+        updateDisplay();
+      }
+
+      startBtn.addEventListener("click", startTimer);
+      pauseBtn.addEventListener("click", pauseTimer);
+      resetBtn.addEventListener("click", resetTimer);
+
+      // Init
+      updateDisplay();
+    </script>
+  </body>
+</html>
